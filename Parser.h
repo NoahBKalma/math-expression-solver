@@ -1,9 +1,14 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
 class Parser {
+private:
+    std::vector<std::string> tokens;
+
 public:
 
-private:
 };
 
 // vector of tokens, tree

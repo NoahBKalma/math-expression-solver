@@ -11,4 +11,5 @@ add_executable(math_expression_solver main.cpp
         Node.h
         Evaluator.cpp
         Evaluator.h
+        Token.h
 )
