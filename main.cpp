@@ -1,11 +1,12 @@
 #include <iostream>
 #include "Token.h"
 #include "Lexer.h"
+#include "Parser.h"
 
 int main() {
-    for(const Token& currToken : Lexer::tokenize("342-12'103^3+5")) {
-        std::cout << currToken.value << ", ";
-    }
+    Parser parser{"342-12*[103^(15/3)]+(5^2)"};
+    parser.parseExpression();
+    parser.printExpression();
 
     return 0;
 }

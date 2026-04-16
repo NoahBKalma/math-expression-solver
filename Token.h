@@ -7,6 +7,7 @@ enum class TokenType {
     DelimiterClose,
     Operator,
     Number,
+    SubExpression,
     Unknown
 };
 
@@ -19,11 +20,12 @@ struct Token {
     std::string value;
     TokenType type;
 
-    Token(const std::string& value) : value{ value } {
-        if(delimitersOpen.find(value) != std::string_view::npos) type = TokenType::DelimiterOpen;
-        else if(delimitersClose.find(value) != std::string_view::npos) type = TokenType::DelimiterClose;
-        else if(operators.find(value) != std::string_view::npos) type = TokenType::Operator;
-        else if(digits.find(value) != std::string_view::npos) type = TokenType::Number;
+    Token(const std::string& value = "[SubExpr]") : value{ value } {
+        if(delimitersOpen.find(this->value) != std::string_view::npos) type = TokenType::DelimiterOpen;
+        else if(delimitersClose.find(this->value) != std::string_view::npos) type = TokenType::DelimiterClose;
+        else if(operators.find(this->value) != std::string_view::npos) type = TokenType::Operator;
+        else if(digits.find(this->value) != std::string_view::npos) type = TokenType::Number;
+        else if(this->value == "[SubExpr]") type = TokenType::SubExpression;
         else type = TokenType::Unknown;
     }
 };
