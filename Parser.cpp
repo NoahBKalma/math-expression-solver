@@ -1,7 +1,7 @@
 #include <vector>
 #include <queue>
 #include <iostream>
-#include <algorithm>
+
 #include "Parser.h"
 #include "Lexer.h"
 
@@ -9,13 +9,12 @@ void Parser::changeExpression(const std::string& expression) {
     // Sets the new expression and tokenized expression, then resets the root
     this->expression = expression;
     tokenizedExpression = Lexer::tokenize(expression);
-    delete root;
     root = nullptr;
 }
 
 void Parser::parseExpression() {
-        if(root) throw std::runtime_error("Already Parsed");
-        root = parseExpression_(tokenizedExpression).release();
+    if(root) throw std::runtime_error("Already Parsed");
+    root = parseExpression_(tokenizedExpression);
 }
 
 std::unique_ptr<Node> Parser::parseExpression_(const std::vector<Token>& tokenExpression) {
@@ -65,15 +64,26 @@ std::unique_ptr<Node> Parser::parseExpression_(const std::vector<Token>& tokenEx
     return node;
 }
 
-void Parser::printExpression_(Node* base, int depth) {
+void Parser::printExpression_(const Node* base, int depth) const {
     // Prints current data and then calls recursively for each child (runs over whole tree)
     std::cout << std::string(depth, '-');
-    for(Token currToken : base->tokens) {
+    for(const Token& currToken : base->tokens) {
         std::cout << currToken.value << ", ";
     }
     std::cout << "\n";
-    for(std::unique_ptr<Node>& child : base->children) {
+    for(const std::unique_ptr<Node>& child : base->children) {
         printExpression_(child.get(), depth+1);
     }
+}
+
+int Parser::find(TokenType type, Node* node) {
+    for(int i = 0; i < node->tokens.size(); i++) {
+        if(node->tokens[i].type == type) return i;
+    }
+    return -1;
+}
+
+bool Parser::contains(TokenType type, Node *node) {
+    return (find(type, node) > -1) ? true : false;
 }
 

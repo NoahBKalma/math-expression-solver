@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "Token.h"
 
 struct Node {

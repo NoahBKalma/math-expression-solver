@@ -2,11 +2,10 @@
 
 #include <vector>
 #include <string>
+
 #include "Token.h"
 
-class Lexer {
-private:
-public:
+struct Lexer {
     // Turns a string into a vector of tokens
     static std::vector<Token> tokenize(const std::string&);
 
