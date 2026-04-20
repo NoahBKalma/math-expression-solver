@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "Token.h"
+#include "Tokens.h"
 
 struct Lexer {
     // Turns a string into a vector of tokens

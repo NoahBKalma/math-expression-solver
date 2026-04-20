@@ -1,14 +1,16 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
-#include "Token.h"
+#include "Tokens.h"
 
 struct Node {
-    std::vector<Token> tokens;
-    std::vector<std::unique_ptr<Node>> children;
+    Token token;
+    std::unique_ptr<Node> leftNode;
+    std::unique_ptr<Node> rightNode;
 
-    Node(const std::vector<Token>& tokens) :
-        tokens{tokens} {}
+    Node(const Token& token) :
+        token{token},
+        leftNode{ nullptr },
+        rightNode{ nullptr} {}
 };
