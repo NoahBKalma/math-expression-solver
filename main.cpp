@@ -12,22 +12,32 @@ enum class MenuChoice {
     Unknown
 };
 
-std::string toLower(std::string& string) {
+// Converts a string to lowercase;
+void toLower(std::string& string) {
     for(char& c : string) if(c >= 65 && c <= 90) c += 32;
-    return string;
 }
 
+// Clears the screen (uses ANSI Escape Sequences)
+void clearScreen() {
+    // \033[H   -> Move cursor to home
+    // \033[2J  -> Clear visible screen (often scrolls text up)
+    // \033[3J  -> Deletes history (ensure clearing the \033[2J may have mixed)
+    std::cout << "\033[H\033[2J\033[3J" << std::flush;
+}
+
+// Lists all possible user commands
 void listOptions() {
     std::cout << "----------------------------------------\n"
                  "\'Expression\' to evaluate expression.\n"
                  "\'List\' to list commands.\n"
                  "\'Exit\' at any point to exit.\n"
                  "\'Clear\' to clear screen.\n"
-                 "\'ShowH\' to clear screen.\n"
+                 "\'ShowH\' to show history.\n"
                  "\'ClearH\' to clear history.\n"
                  "----------------------------------------\n";
 }
 
+// Prompts the user for input on what command they want to execute
 MenuChoice getUserChoice() {
     std::string userChoiceStr;
     std::cout << "What would you like to do: ";
@@ -42,6 +52,7 @@ MenuChoice getUserChoice() {
     return MenuChoice::Unknown;
 }
 
+// Prompts the user for input on what expression they want to evaluate
 bool getUserExpression(Evaluator& evaluator) {
     std::string userExpression{};
     while(true) {
@@ -60,6 +71,7 @@ bool getUserExpression(Evaluator& evaluator) {
 }
 
 int main() {
+    clearScreen();
     Evaluator evaluator;
     listOptions();
     MenuChoice userChoice{ getUserChoice() };
@@ -75,7 +87,7 @@ int main() {
                 listOptions();
                 break;
             case MenuChoice::ClearScreen:
-                std::cout << "\033[3J\033[H\033[2J" << std::flush;
+                clearScreen();
                 break;
             case MenuChoice::ShowHistory:
                 std::cout << "-----------------------------\n";
