@@ -2,20 +2,31 @@
 
 This program solves math expressions for you.
 
-## Usage
+## Usage    
 
 ### Requirements
+- **Compiler (Able to run C++ 20):**
+    - GCC 10+ (Tested with 13.2.0)
+    - CMake 4.0+ (Tested with 4.2)
+- **OS:** Windows
 
-- A C++20-compatible compiler (Like GCC 10+)
-- Windows
+### How To Build & Run
+ 
+Clone the repository, then choose one of the following build methods:
 
-### How To Run
 
-Run **calculator.exe** to run the program in a console.<br><br>
-I created the .exe with the following GCC command:
-
+#### Option 1: GCC
+ 
 ```
-g++ -std=c++20 main.cpp Lexer.cpp Parser.cpp Evaluator.cpp -o calculator.exe
+g++ -std=c++20 main.cpp Lexer.cpp Parser.cpp Evaluator.cpp -o math_expression_solver.exe
+./math_expression_solver.exe
+```
+#### Option 2: CMake
+ 
+```
+cmake -B build
+cmake --build build
+./build/math_expression_solver.exe
 ```
 
 ### Current Features
