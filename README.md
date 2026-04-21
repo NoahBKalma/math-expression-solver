@@ -7,26 +7,26 @@ This program solves math expressions for you.
 ### Requirements
 - **Compiler (Able to run C++ 20):**
     - GCC 10+ (Tested with 13.2.0)
-    - CMake 4.0+ (Tested with 4.2)
-- **OS:** Windows
+- **Optional**
+  - CMake 3.5+ (Tested with 4.2)
 
 ### How To Build & Run
  
 Clone the repository, then choose one of the following build methods:
 
 
-#### Option 1: GCC
+#### Option 1: GCC (No CMake needed)
  
 ```
-g++ -std=c++20 main.cpp Lexer.cpp Parser.cpp Evaluator.cpp -o math_expression_solver.exe
-./math_expression_solver.exe
+g++ -std=c++20 main.cpp Lexer.cpp Parser.cpp Evaluator.cpp -o math_expression_solver
+./math_expression_solver
 ```
 #### Option 2: CMake
  
 ```
 cmake -B build
 cmake --build build
-./build/math_expression_solver.exe
+./build/math_expression_solver
 ```
 
 ### Current Features
