@@ -128,6 +128,7 @@ int Parser::findLowestPrecedence(const std::vector<Token>& tokenExpression) cons
         if(depth > 0) continue;
 
         // Sets lowest precedence and its position for each operator
+        // Everything except ^ is >= to give leftmost precedence for operators with equivalent precedence (^ is rightmost)
         if(tokenExpression[i].mValue == "!" && lowestPrecedence >= 4) {
             lowestPrecedence = 4;
             posLowestPrecedence = i;

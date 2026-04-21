@@ -2,7 +2,7 @@
 
 This program solves math expressions for you.
 
-## Usage (Windows)
+## Usage
 
 ### Requirements
 

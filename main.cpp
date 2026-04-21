@@ -76,6 +76,7 @@ int main() {
     listOptions();
     MenuChoice userChoice{ getUserChoice() };
 
+    // Loops through user menu choices
     while(userChoice != MenuChoice::Exit) {
         switch(userChoice) {
             case MenuChoice::EvalExpression:

@@ -3,49 +3,56 @@
 
 #include "Evaluator.h"
 
-float Evaluator::evaluateFactorial(float n) { return static_cast<float>(tgamma(n + 1)); }
-float Evaluator::evaluateExponent(float n1, float n2) { return std::pow(n1, n2);}
-float Evaluator::evaluateMultiply(float n1, float n2) { return n1 * n2; }
-float Evaluator::evaluateDivide(float n1, float n2) { return (n2 != 0.0f) ? n1/n2 : throw std::runtime_error("Cannot divide by 0"); }
-float Evaluator::evaluateAdd(float n1, float n2) { return n1 + n2; }
-float Evaluator::evaluateSubtract(float n1, float n2) { return n1 - n2; }
+
+double Evaluator::evaluateFactorial(double n) { return static_cast<double>(tgamma(n + 1)); }
+double Evaluator::evaluateExponent(double n1, double n2) { return std::pow(n1, n2);}
+double Evaluator::evaluateMultiply(double n1, double n2) { return n1 * n2; }
+double Evaluator::evaluateDivide(double n1, double n2) { return (n2 != 0.0) ? n1/n2 : throw std::runtime_error("Cannot divide by 0"); }
+double Evaluator::evaluateAdd(double n1, double n2) { return n1 + n2; }
+double Evaluator::evaluateSubtract(double n1, double n2) { return n1 - n2; }
 
 void Evaluator::setExpression(const std::string& expression) {
     mExpressionParser.changeExpression(expression);
     mExpressionParser.parseExpression();
 }
 
-float Evaluator::evaluate() {
-    float result{ evaluate_(mExpressionParser.getRoot()) };
+double Evaluator::evaluate() {
+    // Evaluate and store result in double result
+    double result{ evaluate_(mExpressionParser.getRoot()) };
+    // Add successful calculation to history
     mHistory.emplace_back( mExpressionParser.getExpression(), result );
     return result;
 }
 
-float Evaluator::evaluate_(const Node *base) {
+double Evaluator::evaluate_(const Node *base) {
     if(!base) throw std::runtime_error("Node is null in evaluate_()");
 
+    // If at a leaf node (just a number), return the number
     if(base->token.mType == TokenType::Number) {
-        return std::stof(base->token.mValue);
+        return std::stod(base->token.mValue);
     }
-    if(base->token.mType != TokenType::Operator) throw std::runtime_error("Error evaluating expression");
+    // If theres somehow another token in that isn't an operator, throw an error
+    if(base->token.mType != TokenType::Operator) throw std::runtime_error("Unknown token: " + base->token.mValue);
 
+    // Evaluates depending on what the base operator is
     if(base->token.mValue == "!") {
         return evaluateFactorial(evaluate_(base->leftNode.get()));
-    } else if(base->token.mValue == "^") {
+    } if(base->token.mValue == "^") {
         return evaluateExponent(evaluate_(base->leftNode.get()), evaluate_(base->rightNode.get()));
-    } else if(base->token.mValue == "*") {
+    } if(base->token.mValue == "*") {
         return evaluateMultiply(evaluate_(base->leftNode.get()), evaluate_(base->rightNode.get()));
-    } else if(base->token.mValue == "/") {
+    } if(base->token.mValue == "/") {
         return evaluateDivide(evaluate_(base->leftNode.get()), evaluate_(base->rightNode.get()));
-    } else if(base->token.mValue == "+") {
+    } if(base->token.mValue == "+") {
         return evaluateAdd(evaluate_(base->leftNode.get()), evaluate_(base->rightNode.get()));
-    } else if(base->token.mValue == "-") {
+    } if(base->token.mValue == "-") {
         return evaluateSubtract(evaluate_(base->leftNode.get()), evaluate_(base->rightNode.get()));
     }
-    return std::stof(base->token.mValue);
+    return std::stod(base->token.mValue);
 }
 
 void Evaluator::printHistory() {
+    // Print history if there is any
     if(mHistory.empty()) {
         std::cout << "History empty\n";
         return;

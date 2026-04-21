@@ -6,18 +6,18 @@
 class Evaluator {
 private:
     Parser mExpressionParser;
-    std::vector<std::pair<std::string, float>> mHistory;
+    std::vector<std::pair<std::string, double>> mHistory;
 
     // Helper recursive function for evaluate()
-    float evaluate_(const Node*);
+    double evaluate_(const Node*);
 
     // Evaluate with unary and binary operators
-    static float evaluateFactorial(float);
-    static float evaluateExponent(float, float);
-    static float evaluateMultiply(float, float);
-    static float evaluateDivide(float, float);
-    static float evaluateAdd(float, float);
-    static float evaluateSubtract(float, float);
+    static double evaluateFactorial(double);
+    static double evaluateExponent(double, double);
+    static double evaluateMultiply(double, double);
+    static double evaluateDivide(double, double);
+    static double evaluateAdd(double, double);
+    static double evaluateSubtract(double, double);
 
 public:
     // Constructor
@@ -29,12 +29,12 @@ public:
     const std::string& getExpression() { return mExpressionParser.getExpression(); }
 
     // This is the bulk of the code, actually evaluates expressions
-    float evaluate();
+    double evaluate();
 
     // Print tree structure using parser print function (for testing purposes)
     void print() { mExpressionParser.printExpression(); }
 
-    // Print History
+    // Manage History
     void printHistory();
     void clearHistory() { mHistory.clear(); }
 };
