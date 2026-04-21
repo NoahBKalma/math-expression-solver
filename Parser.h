@@ -36,6 +36,7 @@ public:
 
     /* changeExpression allows you to change the expression used by the parser. */
     void changeExpression(const std::string&);
+    const std::string& getExpression() { return mExpression; }
 
     // parseExpression generates a tree with member variable root as the root
     // Each child represents a token in the equation
