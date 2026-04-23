@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 #include "Parser.h"
 #include "Lexer.h"
@@ -61,6 +62,15 @@ void Parser::printExpression_(const Node* base, int spaces) const {
 
     // Calls recursively going left
     printExpression_(base->leftNode.get(), spaces);
+}
+
+void Parser::printExpressionClean_(const Node *base) const {
+    if(!base) return;
+
+    printExpressionClean_(base->leftNode.get());
+    if(base->token.mType == TokenType::Number) std::cout << std::round(std::stod(base->token.mValue)*10000)/10000;
+    else std::cout << base->token.mValue;
+    printExpressionClean_(base->rightNode.get());
 }
 
 void Parser::cleanExpression(std::vector<Token>& tokenExpression) {

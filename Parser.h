@@ -17,6 +17,7 @@ private:
 
     // Helper recursive function for printExpression()
     void printExpression_(const Node*, int) const;
+    void printExpressionClean_(const Node*) const;
 
     // Cleans expression (adds * before parenthesis, removes parentheses wrapping whole expression
     void cleanExpression(std::vector<Token>&);
@@ -44,6 +45,7 @@ public:
 
     // printExpression prints the expression from a tree. Used for testing
     void printExpression() const { printExpression_(mRoot.get(), 0); }
+    void printExpressionClean() const { printExpressionClean_(mRoot.get()); std::cout << std::endl; }
 
     // Return the root of the expression tree
     Node* getRoot() const { return mRoot.get(); }

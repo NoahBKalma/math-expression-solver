@@ -32,6 +32,7 @@ cmake --build build
 ### Current Features
 - Operators: +, -, *, /, ^, !
 - Parentheses/brackets (including (), [], {})
+- Step-by-step solution of expression
 - Implicit multiplication, e.g. 2(3+4)
 - Negative numbers
 - Multi-digit and decimal numbers
@@ -49,6 +50,5 @@ cmake --build build
 
 ### Planned Features
 - Functions such as sqrt() as well as sin(x), cos(x), and other trig functions
-- Optional step-by-step breakdown of each expression
 - Support for full equations with multiple variables
 - Load back to previous expressions through the history (possibly)

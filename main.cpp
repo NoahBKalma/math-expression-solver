@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include "Evaluator.h"
 
@@ -81,7 +82,10 @@ int main() {
         switch(userChoice) {
             case MenuChoice::EvalExpression:
                 if(!getUserExpression(evaluator)) break;
-                try { std::cout << "Expression equals: " << evaluator.evaluate() << "\n"; }
+                try {
+                    double exprResult{ evaluator.evaluate() };
+                    std::cout << "Expression equals: " << std::round(exprResult*10000)/10000 << "\n";
+                }
                 catch(std::runtime_error& error) { std::cout << error.what() << "\n"; }
                 break;
             case MenuChoice::ListOptions:
