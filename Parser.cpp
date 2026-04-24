@@ -18,29 +18,31 @@ void Parser::parseExpression() {
 }
 
 void Parser::parseExpression_(std::vector<Token> tokenExpression, std::unique_ptr<Node>& base) {
-
     // Checks the expression is valid
-    if(tokenExpression.empty()) throw std::runtime_error("Invalid Expression");
+    if(tokenExpression.empty()) throw std::runtime_error("Error parsing expression.");
 
     // Cleans Expression
     cleanExpression(tokenExpression);
 
     // If it's just one token (number left) then add it to list
     if(tokenExpression.size() <= 1) {
-        if(tokenExpression[0].mType != TokenType::Number) throw std::runtime_error("Invalid Expression");
+        if(tokenExpression[0].mType != TokenType::Number) throw std::runtime_error("Invalid token: " + tokenExpression[0].mValue);
         base = std::make_unique<Node>(tokenExpression[0]);
         return;
     }
 
     // Finds the lowest precedence operator to build the list from the top down
-    int pos = findLowestPrecedence(tokenExpression);
+    size_t pos = findLowestPrecedence(tokenExpression);
     if(pos == -1) throw std::runtime_error("Error parsing expression");
 
     // Adds the operator to the tree and then recursively calls the left and right sides of the expression
     base = std::make_unique<Node>(tokenExpression[pos]);
 
+    // Only uses the right side of the function call
+    if(base->token.mType == TokenType::Function) {
+        parseExpression_(std::vector<Token>{tokenExpression.begin() + pos + 1, tokenExpression.end()}, base->rightNode);
     // Because ! is unary, it only parses what is to the left of it
-    if(base->token.mValue == "!") {
+    } else if(base->token.mValue == "!") {
         parseExpression_(std::vector<Token>{tokenExpression.begin(), tokenExpression.begin() + pos}, base->leftNode);
     } else {
         parseExpression_(std::vector<Token>{tokenExpression.begin(), tokenExpression.begin() + pos}, base->leftNode);
@@ -48,7 +50,7 @@ void Parser::parseExpression_(std::vector<Token> tokenExpression, std::unique_pt
     }
 }
 
-void Parser::printExpression_(const Node* base, int spaces) const {
+void Parser::printExpression_(const Node* base, size_t spaces) const {
     if(!base) return;
 
     // Increments depth for each level it parses
@@ -74,7 +76,7 @@ void Parser::printExpressionClean_(const Node *base) const {
 }
 
 void Parser::cleanExpression(std::vector<Token>& tokenExpression) {
-    if(tokenExpression[0].mType == TokenType::DelimiterClose) throw std::runtime_error("Error in first token");
+    if(tokenExpression[0].mType == TokenType::DelimiterClose) throw std::runtime_error("First token cannot be " + tokenExpression[0].mValue);
 
     while(tokenExpression[0].mType == TokenType::DelimiterOpen) {
         // If there are delimiters wrapping the whole expression, remove them
@@ -109,6 +111,12 @@ void Parser::cleanExpression(std::vector<Token>& tokenExpression) {
                 tokenExpression[i-1].mType == TokenType::DelimiterClose)) {
             tokenExpression.emplace(tokenExpression.begin() + i, Token("*"));
             i++;
+        } else if((tokenExpression[i].mType == TokenType::Function && // Checks to add implicit multiplication before a function
+                i > 0 &&
+                (tokenExpression[i-1].mType == TokenType::Number ||
+                tokenExpression[i-1].mType == TokenType::DelimiterClose))) {
+            tokenExpression.emplace(tokenExpression.begin() + i, Token("*"));
+            i++;
         } else if(tokenExpression[i].mType == TokenType::Number &&  // Checks and fixes negatives
                 i >= 1 &&
                 tokenExpression[i-1].mValue == "-" &&
@@ -131,15 +139,18 @@ int Parser::findLowestPrecedence(const std::vector<Token>& tokenExpression) cons
             if(tokenExpression[i].mType == TokenType::DelimiterOpen) depth++;
             else depth--;
         }
-        // Only checks token if it is an operator
-        if(tokenExpression[i].mType != TokenType::Operator) continue;
+        // Only checks token if it is an operator or function
+        if(tokenExpression[i].mType != TokenType::Operator && tokenExpression[i].mType != TokenType::Function) continue;
 
         // Doesn't check for precedence within delimiters
         if(depth > 0) continue;
 
         // Sets lowest precedence and its position for each operator
         // Everything except ^ is >= to give leftmost precedence for operators with equivalent precedence (^ is rightmost)
-        if(tokenExpression[i].mValue == "!" && lowestPrecedence >= 4) {
+        if(tokenExpression[i].mType == TokenType::Function && lowestPrecedence >= 5) {
+            lowestPrecedence = 5;
+            posLowestPrecedence = i;
+        } else if(tokenExpression[i].mValue == "!" && lowestPrecedence >= 4) {
             lowestPrecedence = 4;
             posLowestPrecedence = i;
         } else if(tokenExpression[i].mValue == "^" && lowestPrecedence > 3) {

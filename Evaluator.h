@@ -7,10 +7,10 @@ class Evaluator {
 private:
     Parser mExpressionParser;
     std::vector<std::pair<std::string, double>> mHistory;
-    int maxASTDepth;
+    size_t maxASTDepth;
 
     // Helper recursive function for evaluate()
-    double evaluate_(Node*, int);
+    double evaluate_(Node*, size_t);
 
     // Evaluate with unary and binary operators
     static double evaluateFactorial(double);
@@ -19,10 +19,11 @@ private:
     static double evaluateDivide(double, double);
     static double evaluateAdd(double, double);
     static double evaluateSubtract(double, double);
+    static double evaluateFunction(std::string, double);
 
     // Find max depth
-    int findASTDepth_(const Node*, int);
-    int findASTDepth() { return findASTDepth_(mExpressionParser.getRoot(), 0); }
+    size_t findASTDepth_(const Node*, size_t);
+    size_t findASTDepth() { return findASTDepth_(mExpressionParser.getRoot(), 0); }
 
 public:
     // Constructor

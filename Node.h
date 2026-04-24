@@ -13,4 +13,7 @@ struct Node {
         token{token},
         leftNode{ nullptr },
         rightNode{ nullptr} {}
+
+    void removeRight() { rightNode = nullptr; }
+    void removeLeft() { leftNode = nullptr; }
 };

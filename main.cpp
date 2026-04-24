@@ -71,6 +71,15 @@ bool getUserExpression(Evaluator& evaluator) {
     return false;
 }
 
+// Evaluates Expression
+void evalExpression(Evaluator& evaluator) {
+    try {
+        double exprResult{ evaluator.evaluate() };
+        std::cout << "\nExpression equals: " << std::round(exprResult*10000)/10000 << "\n";
+    }
+    catch(std::runtime_error& error) { std::cout << error.what() << "\n"; }
+}
+
 int main() {
     clearScreen();
     Evaluator evaluator;
@@ -82,11 +91,8 @@ int main() {
         switch(userChoice) {
             case MenuChoice::EvalExpression:
                 if(!getUserExpression(evaluator)) break;
-                try {
-                    double exprResult{ evaluator.evaluate() };
-                    std::cout << "Expression equals: " << std::round(exprResult*10000)/10000 << "\n";
-                }
-                catch(std::runtime_error& error) { std::cout << error.what() << "\n"; }
+                evalExpression(evaluator);
+                std::cout << "----------------------------------------\n";
                 break;
             case MenuChoice::ListOptions:
                 listOptions();
@@ -95,10 +101,10 @@ int main() {
                 clearScreen();
                 break;
             case MenuChoice::ShowHistory:
-                std::cout << "-----------------------------\n";
+                std::cout << "----------------------------------------\n";
                 std::cout << "Expression: Result\n";
                 evaluator.printHistory();
-                std::cout << "-----------------------------\n";
+                std::cout << "----------------------------------------\n";
                 break;
             case MenuChoice::ClearHistory:
                 evaluator.clearHistory();

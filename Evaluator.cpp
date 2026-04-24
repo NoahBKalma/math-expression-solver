@@ -10,14 +10,37 @@ double Evaluator::evaluateMultiply(double n1, double n2) { return n1 * n2; }
 double Evaluator::evaluateDivide(double n1, double n2) { return (n2 != 0.0) ? n1/n2 : throw std::runtime_error("Cannot divide by 0"); }
 double Evaluator::evaluateAdd(double n1, double n2) { return n1 + n2; }
 double Evaluator::evaluateSubtract(double n1, double n2) { return n1 - n2; }
+double Evaluator::evaluateFunction(std::string func, double n1) {
+    if(func == "sqrt") {
+        return std::sqrt(n1);
+    } if(func == "log") {
+        return std::log(n1);
+    } if(func == "sin") {
+        return std::sin(n1 * M_PI/180);
+    } if(func == "cos") {
+        return std::cos(n1 * M_PI/180);
+    } if(func == "tan") {
+        return std::tan(n1 * M_PI/180);
+    } if(func == "csc") {
+        return 1/std::sin(n1 * M_PI/180);
+    } if(func == "sec") {
+        return 1/std::cos(n1 * M_PI/180);
+    } if(func == "cot") {
+        return 1/std::tan(n1 * M_PI/180);
+    }
+    throw std::runtime_error("Couldn't evaluate function " + func);
+}
 
-int Evaluator::findASTDepth_(const Node *base, int depth) {
+size_t Evaluator::findASTDepth_(const Node *base, size_t depth) {
+    // If the base is empty, its parent is a leaf so just return depth
     if(!base) return depth;
     depth++;
 
+    // After incrementing depth, recurse into children
     int maxLeftDepth = findASTDepth_(base->leftNode.get(), depth);
     int maxRightDepth = findASTDepth_(base->rightNode.get(), depth);
 
+    // Return the max depth out of the two children
     return std::max(maxLeftDepth, maxRightDepth);
 }
 
@@ -39,48 +62,53 @@ double Evaluator::evaluate() {
     return result;
 }
 
-double Evaluator::evaluate_(Node *base, int depth) {
+double Evaluator::evaluate_(Node *base, size_t depth) {
     if(!base) throw std::runtime_error("Node is null in evaluate_()");
 
     // If at a leaf node (just a number), return the number
     if(base->token.mType == TokenType::Number) {
         return std::stod(base->token.mValue);
     }
-    // If there'ss somehow another token in that isn't an operator, throw an error
-    if(base->token.mType != TokenType::Operator) throw std::runtime_error("Unknown token: " + base->token.mValue);
+    // If there's somehow another token in that isn't an operator or function, throw an error
+    if(base->token.mType != TokenType::Operator &&
+     base->token.mType != TokenType::Function) throw std::runtime_error("Unknown token: " + base->token.mValue);
 
     // Evaluates depending on what the base operator is
     // Also sets the operator node to equal the result of the operation (evaluating the tree upwards)
     depth++;
-    if(base->token.mValue == "!") {
+    if(base->token.mType == TokenType::Function) {
+        base->token.mValue = std::to_string(evaluateFunction(base->token.mValue, evaluate_(base->rightNode.get(), depth)));
+        base->token.mType =TokenType::Number;
+        base->removeRight();
+    } if(base->token.mValue == "!") {
         base->token.mValue = std::to_string(evaluateFactorial(evaluate_(base->leftNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
+        base->removeLeft();
     } if(base->token.mValue == "^") {
         base->token.mValue = std::to_string(evaluateExponent(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
-        base->rightNode = nullptr;
+        base->removeLeft();
+        base->removeRight();
     } if(base->token.mValue == "*") {
         base->token.mValue = std::to_string(evaluateMultiply(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
-        base->rightNode = nullptr;
+        base->removeLeft();
+        base->removeRight();
     } if(base->token.mValue == "/") {
         base->token.mValue = std::to_string(evaluateDivide(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
-        base->rightNode = nullptr;
+        base->removeLeft();
+        base->removeRight();
     } if(base->token.mValue == "+") {
         base->token.mValue = std::to_string(evaluateAdd(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
-        base->rightNode = nullptr;
+        base->removeLeft();
+        base->removeRight();
     } if(base->token.mValue == "-") {
         base->token.mValue = std::to_string(evaluateSubtract(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
-        base->leftNode = nullptr;
-        base->rightNode = nullptr;
+        base->removeLeft();
+        base->removeRight();
     }
     // Prints the current step (in reverse order, so subtract the step depth from tree depth)
     std::cout << "Step " << maxASTDepth - depth + 1 << ": ";

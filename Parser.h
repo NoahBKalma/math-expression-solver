@@ -16,7 +16,7 @@ private:
     void parseExpression_(std::vector<Token>, std::unique_ptr<Node>&);
 
     // Helper recursive function for printExpression()
-    void printExpression_(const Node*, int) const;
+    void printExpression_(const Node*, size_t) const;
     void printExpressionClean_(const Node*) const;
 
     // Cleans expression (adds * before parenthesis, removes parentheses wrapping whole expression
