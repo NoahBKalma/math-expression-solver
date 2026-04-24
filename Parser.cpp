@@ -5,6 +5,16 @@
 #include "Parser.h"
 #include "Lexer.h"
 
+size_t Parser::getPrecedence(const Node* node) const {
+    if(!node) return SIZE_MAX;
+    if(node->token.mType == TokenType::Function) return 5;
+    if(node->token.mValue == "!") return 4;
+    if(node->token.mValue == "^") return 3;
+    if(node->token.mValue == "*" || node->token.mValue == "/") return 2;
+    if(node->token.mValue == "+" || node->token.mValue == "-") return 1;
+    return SIZE_MAX;
+}
+
 void Parser::changeExpression(const std::string& expression) {
     // Sets the new expression and tokenized expression, then resets the root
     this->mExpression = expression;
@@ -33,7 +43,7 @@ void Parser::parseExpression_(std::vector<Token> tokenExpression, std::unique_pt
 
     // Finds the lowest precedence operator to build the list from the top down
     size_t pos = findLowestPrecedence(tokenExpression);
-    if(pos == -1) throw std::runtime_error("Error parsing expression");
+    if(pos == SIZE_MAX) throw std::runtime_error("Error parsing expression");
 
     // Adds the operator to the tree and then recursively calls the left and right sides of the expression
     base = std::make_unique<Node>(tokenExpression[pos]);
@@ -66,13 +76,20 @@ void Parser::printExpression_(const Node* base, size_t spaces) const {
     printExpression_(base->leftNode.get(), spaces);
 }
 
-void Parser::printExpressionClean_(const Node *base) const {
+void Parser::printExpressionClean_(const Node *base, const Node *parent) const {
     if(!base) return;
 
-    printExpressionClean_(base->leftNode.get());
+    bool needsParenthesis;
+    if(!parent) needsParenthesis = false;
+    else needsParenthesis = base->token.mType == TokenType::Operator || // Puts parenthesis around operator nodes and children
+                            parent->token.mType == TokenType::Function; // Puts paranthesis around things inside functions
+
+    if(needsParenthesis) std::cout << "(";
+    printExpressionClean_(base->leftNode.get(), base);
     if(base->token.mType == TokenType::Number) std::cout << std::round(std::stod(base->token.mValue)*10000)/10000;
     else std::cout << base->token.mValue;
-    printExpressionClean_(base->rightNode.get());
+    printExpressionClean_(base->rightNode.get(), base);
+    if(needsParenthesis) std::cout << ")";
 }
 
 void Parser::cleanExpression(std::vector<Token>& tokenExpression) {
@@ -118,7 +135,7 @@ void Parser::cleanExpression(std::vector<Token>& tokenExpression) {
             tokenExpression.emplace(tokenExpression.begin() + i, Token("*"));
             i++;
         } else if(tokenExpression[i].mType == TokenType::Number &&  // Checks and fixes negatives
-                i >= 1 &&
+                i >= 2 &&
                 tokenExpression[i-1].mValue == "-" &&
                 (tokenExpression[i-2].mType == TokenType::DelimiterOpen ||
                 tokenExpression[i-2].mType == TokenType::Operator)) {
@@ -130,9 +147,10 @@ void Parser::cleanExpression(std::vector<Token>& tokenExpression) {
     }
 }
 
-int Parser::findLowestPrecedence(const std::vector<Token>& tokenExpression) const {
+size_t Parser::findLowestPrecedence(const std::vector<Token>& tokenExpression) const {
     // Precedence and precedence index tracking, also depth tracking for delimiters
-    int posLowestPrecedence{ -1 }, lowestPrecedence{ INT_MAX }, depth{ 0 };
+    size_t posLowestPrecedence{ SIZE_MAX };
+    int lowestPrecedence{ INT_MAX }, depth{ 0 };
     for(int i = 0; i < tokenExpression.size(); i++) {
         // Depth tracking
         if(tokenExpression[i].mType == TokenType::DelimiterOpen || tokenExpression[i].mType == TokenType::DelimiterClose) {

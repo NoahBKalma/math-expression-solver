@@ -17,14 +17,16 @@ private:
 
     // Helper recursive function for printExpression()
     void printExpression_(const Node*, size_t) const;
-    void printExpressionClean_(const Node*) const;
+    void printExpressionClean_(const Node*, const Node* parent) const;
 
     // Cleans expression (adds * before parenthesis, removes parentheses wrapping whole expression
     void cleanExpression(std::vector<Token>&);
 
     // Returns the first position of a token of the given type (returns -1 if not found)
-    int findLowestPrecedence(const std::vector<Token>&) const;
+    size_t findLowestPrecedence(const std::vector<Token>&) const;
 
+    // Gets precedence of token in given node
+    size_t getPrecedence(const Node*) const;
 
 public:
     // Initializes the expression and then tokenizes it with the lexer to get the tokenized expression
@@ -45,7 +47,7 @@ public:
 
     // printExpression prints the expression from a tree. Used for testing
     void printExpression() const { printExpression_(mRoot.get(), 0); }
-    void printExpressionClean() const { printExpressionClean_(mRoot.get()); std::cout << std::endl; }
+    void printExpressionClean() const { printExpressionClean_(mRoot.get(), nullptr); std::cout << std::endl; }
 
     // Return the root of the expression tree
     Node* getRoot() const { return mRoot.get(); }

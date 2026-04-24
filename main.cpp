@@ -15,7 +15,8 @@ enum class MenuChoice {
 
 // Converts a string to lowercase;
 void toLower(std::string& string) {
-    for(char& c : string) if(c >= 65 && c <= 90) c += 32;
+    for(char& c : string)
+        if(c >= 'A' && c <= 'Z') c += 32; // add offset of 32 to make letters lowercase
 }
 
 // Clears the screen (uses ANSI Escape Sequences)

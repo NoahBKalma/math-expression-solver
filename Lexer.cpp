@@ -39,10 +39,15 @@ std::vector<Token> Lexer::tokenize(const std::string& inputString) {
                 tokens[i-clusterLength].mType = TokenType::Function;
                 tokens[i-clusterLength].mValue = currLetterCluster;
                 tokens.erase(tokens.begin() + i - clusterLength + 1, tokens.begin() + i);
-                i += currLetterCluster.length() - 1;
+                i -= currLetterCluster.length();
+            } else {
+                throw std::runtime_error("Unknown function: " + currLetterCluster);
             }
             currLetterCluster = "";
         }
+    }
+    if(!currLetterCluster.empty()) {
+        throw std::runtime_error("Unknown function: " + currLetterCluster);
     }
 
     return tokens;

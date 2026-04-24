@@ -5,10 +5,10 @@
 
 #include "Tokens.h"
 
-struct Lexer {
+namespace Lexer {
     // Turns a string into a vector of tokens
-    static std::vector<Token> tokenize(const std::string&);
+    std::vector<Token> tokenize(const std::string&);
 
     // Checks if a given constant c is whitespace
-    static bool isWhitespace(const char c) { return (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '\f'); }
-};
+    inline bool isWhitespace(const char c) { return (c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '\f'); }
+}

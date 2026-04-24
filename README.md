@@ -31,7 +31,8 @@ cmake --build build
 
 ### Current Features
 - **Operators:** +, -, *, /, ^, !
-- **Functions:** sqrt, log, sin, cos, tan, csc, sec, cot
+- **Functions:** sqrt, ln, sin, cos, tan, csc, sec, cot
+  - trig functions are in degrees
 - **Parentheses/brackets:** (including (), [], {})
 - Step-by-step solution of expression
 - Implicit multiplication e.g. 2(3+4) -> 2*(3+4)

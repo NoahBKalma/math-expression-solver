@@ -12,8 +12,10 @@ double Evaluator::evaluateAdd(double n1, double n2) { return n1 + n2; }
 double Evaluator::evaluateSubtract(double n1, double n2) { return n1 - n2; }
 double Evaluator::evaluateFunction(std::string func, double n1) {
     if(func == "sqrt") {
+        if(n1 < 0) throw std::runtime_error("Cannot take sqrt of a negative number");
         return std::sqrt(n1);
     } if(func == "log") {
+        if(n1 <= 0) throw std::runtime_error("Cannot take log of a non-positive number");
         return std::log(n1);
     } if(func == "sin") {
         return std::sin(n1 * M_PI/180);
@@ -37,8 +39,8 @@ size_t Evaluator::findASTDepth_(const Node *base, size_t depth) {
     depth++;
 
     // After incrementing depth, recurse into children
-    int maxLeftDepth = findASTDepth_(base->leftNode.get(), depth);
-    int maxRightDepth = findASTDepth_(base->rightNode.get(), depth);
+    size_t maxLeftDepth = findASTDepth_(base->leftNode.get(), depth);
+    size_t maxRightDepth = findASTDepth_(base->rightNode.get(), depth);
 
     // Return the max depth out of the two children
     return std::max(maxLeftDepth, maxRightDepth);
@@ -80,31 +82,31 @@ double Evaluator::evaluate_(Node *base, size_t depth) {
         base->token.mValue = std::to_string(evaluateFunction(base->token.mValue, evaluate_(base->rightNode.get(), depth)));
         base->token.mType =TokenType::Number;
         base->removeRight();
-    } if(base->token.mValue == "!") {
+    } else if(base->token.mValue == "!") {
         base->token.mValue = std::to_string(evaluateFactorial(evaluate_(base->leftNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();
-    } if(base->token.mValue == "^") {
+    } else if(base->token.mValue == "^") {
         base->token.mValue = std::to_string(evaluateExponent(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();
         base->removeRight();
-    } if(base->token.mValue == "*") {
+    } else if(base->token.mValue == "*") {
         base->token.mValue = std::to_string(evaluateMultiply(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();
         base->removeRight();
-    } if(base->token.mValue == "/") {
+    } else if(base->token.mValue == "/") {
         base->token.mValue = std::to_string(evaluateDivide(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();
         base->removeRight();
-    } if(base->token.mValue == "+") {
+    } else if(base->token.mValue == "+") {
         base->token.mValue = std::to_string(evaluateAdd(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();
         base->removeRight();
-    } if(base->token.mValue == "-") {
+    } else if(base->token.mValue == "-") {
         base->token.mValue = std::to_string(evaluateSubtract(evaluate_(base->leftNode.get(), depth), evaluate_(base->rightNode.get(), depth)));
         base->token.mType = TokenType::Number;
         base->removeLeft();

@@ -8,6 +8,7 @@ private:
     Parser mExpressionParser;
     std::vector<std::pair<std::string, double>> mHistory;
     size_t maxASTDepth;
+    bool evaluated;
 
     // Helper recursive function for evaluate()
     double evaluate_(Node*, size_t);

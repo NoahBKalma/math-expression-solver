@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <array>
 #include<unordered_set>
 
 // Defines token types
@@ -22,7 +21,7 @@ inline std::string_view operators           = "+-/*^!";
 inline std::string_view number              = "1234567890.";
 inline std::string_view letter              = "abcdefghijklmnopqrstuvwxyz";
 inline std::unordered_set<std::string> functions = { // Change evaluateFunction in Evaluator.cpp when updating list
-    "sqrt","log","sin","cos","tan","csc","sec","cot" };
+    "sqrt","ln","sin","cos","tan","csc","sec","cot" };
 
 // Check if a given str is a function
 inline bool isFunction(const std::string& str) {
