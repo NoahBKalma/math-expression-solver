@@ -80,7 +80,7 @@ void Parser::printExpressionClean_(const Node *base, const Node *parent) const {
     if(!base) return;
 
     bool needsParenthesis;
-    if(!parent) needsParenthesis = false;
+    if(!parent) needsParenthesis = false; // Makes sure it isn't root node
     else needsParenthesis = base->token.mType == TokenType::Operator || // Puts parenthesis around operator nodes and children
                             parent->token.mType == TokenType::Function; // Puts paranthesis around things inside functions
 

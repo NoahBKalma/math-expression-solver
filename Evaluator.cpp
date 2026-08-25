@@ -3,6 +3,7 @@
 
 #include "Evaluator.h"
 
+constexpr double PI = 3.14159265358979323846;
 
 double Evaluator::evaluateFactorial(double n) { return tgamma(n + 1); }
 double Evaluator::evaluateExponent(double n1, double n2) { return std::pow(n1, n2); }
@@ -18,17 +19,17 @@ double Evaluator::evaluateFunction(std::string func, double n1) {
         if(n1 <= 0) throw std::runtime_error("Cannot take log of a non-positive number");
         return std::log(n1);
     } if(func == "sin") {
-        return std::sin(n1 * M_PI/180);
+        return std::sin(n1 * PI/180);
     } if(func == "cos") {
-        return std::cos(n1 * M_PI/180);
+        return std::cos(n1 * PI/180);
     } if(func == "tan") {
-        return std::tan(n1 * M_PI/180);
+        return std::tan(n1 * PI/180);
     } if(func == "csc") {
-        return 1/std::sin(n1 * M_PI/180);
+        return 1/std::sin(n1 * PI/180);
     } if(func == "sec") {
-        return 1/std::cos(n1 * M_PI/180);
+        return 1/std::cos(n1 * PI/180);
     } if(func == "cot") {
-        return 1/std::tan(n1 * M_PI/180);
+        return 1/std::tan(n1 * PI/180);
     }
     throw std::runtime_error("Couldn't evaluate function " + func);
 }
@@ -53,7 +54,8 @@ void Evaluator::setExpression(const std::string& expression) {
 
 double Evaluator::evaluate() {
     // Print the initial step
-    std::cout << "Step 1: "; mExpressionParser.printExpressionClean();
+    mStepCounter = 1;
+    std::cout << "Step " << mStepCounter << ": "; mExpressionParser.printExpressionClean();
     // Find and store the depth of the tree
     maxASTDepth = findASTDepth();
 
@@ -112,8 +114,8 @@ double Evaluator::evaluate_(Node *base, size_t depth) {
         base->removeLeft();
         base->removeRight();
     }
-    // Prints the current step (in reverse order, so subtract the step depth from tree depth)
-    std::cout << "Step " << maxASTDepth - depth + 1 << ": ";
+    // Prints the current step
+    std::cout << "Step " << ++mStepCounter << ": ";
     mExpressionParser.printExpressionClean();
     return std::stod(base->token.mValue);
 }
