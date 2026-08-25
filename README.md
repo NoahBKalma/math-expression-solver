@@ -1,7 +1,7 @@
 # Math Expression Solver
 
 ![Language](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)
-![Status](https://img.shields.io/badge/status-in%20progress-yellow?style=flat-square)
+![Status](https://img.shields.io/badge/status-complete-brightgreen?style=flat-square)
 
 A C++ math expression solver that parses and evaluates expressions via a hand-written lexer, recursive-descent parser, and AST evaluator — showing its work step by step instead of just returning a final number.
 
@@ -72,9 +72,3 @@ cmake --build build
 - **ClearH** — clear history
 - **Clear** — clear the console
 - **Exit** — exit the program (or the expression prompt)
-
----
-
-## Status
-
-Core solver is complete and working: operators, functions, brackets, step-by-step output, and expression history.
